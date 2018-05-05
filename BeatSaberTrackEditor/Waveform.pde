@@ -7,7 +7,7 @@ class Waveform extends GUIElement {
   private FloatList sampleAverage; 
   private int border, leftLength, rightLength;
   private int sampleRate = 44100;
-  private float bpm = 90;
+  private float bpm = 0;
   
   // Resolution of the display
   private float sizeOfAvg = 0;
@@ -16,12 +16,12 @@ class Waveform extends GUIElement {
   private float maxSize = 0;
   
   private int gridSize = 0;
-  private int beatsPerBar = 1;
+  private float beatsPerBar = 1.0;
   
   // width adjustment for audio display  
   private int widthScale = 200;
   
-  String soundfilePath = "data\\90BPM_Stereo_ClickTrack.wav";
+  String soundfilePath = "";
   
   Waveform(GUIElement parent, int x, int y, int gridSize, Minim minim){
     super(parent, x, y, gridSize, gridSize);
@@ -49,15 +49,19 @@ class Waveform extends GUIElement {
     resizeDisplay();
   }
   
-  public void setBeatsPerBar(int beats){
+  public void setBeatsPerBar(float beats){
     this.beatsPerBar = beats;
+    println("beatsPerBar: " + this.beatsPerBar);
     resizeDisplay();
   }
   
   private void calculateSizeOfAVG(){
-    sizeOfAvg = (this.sampleRate / (this.bpm / 60) ) / this.gridSize;
+    this.sizeOfAvg = (int)((this.sampleRate * 60) / this.bpm) / this.gridSize / this.beatsPerBar ;
+    println("sampleRate: " + this.sampleRate);
+    println("bpm: " + this.bpm);
+    println("gridSize: " + this.gridSize);
     // Implement beats per bar here somewhere?
-    println("sizeOfAvg: " + sizeOfAvg);
+    println("sizeOfAvg: " + this.sizeOfAvg);
   }
   
   public void resizeDisplay(){
@@ -66,7 +70,7 @@ class Waveform extends GUIElement {
     float[] rightSamples = sound.getChannel(AudioSample.RIGHT);
     float[] samplesVal = new float[rightSamples.length];
     for (int i = 0; i < rightSamples.length; ++i) {
-      samplesVal[i] = leftSamples[i]+ rightSamples[i];
+      samplesVal[i] = leftSamples[i] + rightSamples[i];
     }
     
     leftLength  = leftSamples.length;
@@ -75,22 +79,32 @@ class Waveform extends GUIElement {
     //2. reduce quantity : get an average from those values
     sampleAverage = new FloatList();
     int average=0;
+    
+    println(this.gridSize);
+    
+    // Find the largest value
+    
     for (int i = 0; i < samplesVal.length; ++i) {
-      average += abs(samplesVal[i] * widthScale) ; // sample are low value so we increase the size to see them
+      average += abs(samplesVal[i]); // sample are low value so we increase the size to see them
       
       if ( i % sizeOfAvg == 0) {
-        float newVal = average / sizeOfAvg;;
+        float newVal = average / sizeOfAvg;
         sampleAverage.append(newVal);
         if(newVal > maxSize)
           maxSize = newVal;
         average = 0;
       }
+    }
+    
+    // Scale to correct width
+    for (int i = 0; i < samplesVal.length; ++i) {
+      samplesVal[i] = map(samplesVal[i], 0, maxSize, 0, 100);
     } 
   }
   
   public void setSampleRate(int sampleRate){
     this.sampleRate = sampleRate;
-    
+    this.resizeDisplay();
   }
   
   // Get number of samples in soundfile
@@ -112,6 +126,8 @@ class Waveform extends GUIElement {
   }
   
   public void display(){
+    super.display();
+    
     if(sampleRate != 0){
       if(sound != null){
         fill(190);
@@ -119,6 +135,7 @@ class Waveform extends GUIElement {
         strokeWeight(1);
         
         // Draw the waveform display and the time. Time is currently showing each second
+        
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
           // Draw the sound file

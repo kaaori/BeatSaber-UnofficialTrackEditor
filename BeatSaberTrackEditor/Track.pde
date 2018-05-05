@@ -77,6 +77,12 @@ class Track extends GUIElement{
     yStartingPosition = this.getY();
   }
   
+  public void clearData(){
+    for(int i = 0; i < gridBlocks.length; ++i){
+      gridBlocks[i] = null;
+    }
+  }
+  
   public void display(){
     super.display();    
     

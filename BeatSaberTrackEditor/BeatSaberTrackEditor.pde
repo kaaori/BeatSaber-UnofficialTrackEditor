@@ -272,13 +272,19 @@ public void handleFileDialog(GButton button) {
   // File input selection
   if (button == btnOpenSong) {
     // Use file filter if possible
-    fname = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
+    fname = G4P.selectInput("Select Sound File", "wav,mp3,aiff", "Sound files");
     lblFile.setText(fname);
     sequencer.loadSoundFile(fname);
   }
+  // File in selection
+  else if (button == btnInput) {
+    fname = G4P.selectInput("Select Input Track Location");
+    lblFile.setText(fname);
+    jsonManager.loadTrack(fname);
+  }
   // File output selection
   else if (button == btnOutput) {
-    fname = G4P.selectOutput("Output Dialog");
+    fname = G4P.selectOutput("Select Output Track Location");
     lblFile.setText(fname);
     jsonManager.saveTrack(fname);
   }

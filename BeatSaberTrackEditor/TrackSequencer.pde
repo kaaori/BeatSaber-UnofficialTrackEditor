@@ -19,7 +19,7 @@ class TrackSequencer extends GUIElement{
   private int currentType = 0;
   private int currentCutDirection = 8;
   
-  int beatsPerBar = 8;
+  private float beatsPerBar = 8.0;
   
   public ArrayList<MultiTrack> multiTracks;
   
@@ -94,6 +94,10 @@ class TrackSequencer extends GUIElement{
     return currentCutDirection;
   }
   
+  public int getGridSize(){
+    return gridSize;
+  }
+  
   public void scrollY(float scroll){
     if(scroll > 0){
       this.setY((int)(this.getY() + scroll * gridSize));
@@ -111,7 +115,7 @@ class TrackSequencer extends GUIElement{
     this.bpm = bpm;
     waveform.setBPM(bpm);
     
-    int numBeats = ceil(this.getBPM() * (waveform.getLength() / 60000.0)) * beatsPerBar;
+    int numBeats = ceil(this.getBPM() * (waveform.getLength() / 60000.0)) * (int)beatsPerBar;
     
     //println("minutes: " + waveform.getLength() / 60000.0);
     //println("Numbeats:" + numBeats);
@@ -140,6 +144,10 @@ class TrackSequencer extends GUIElement{
     return trackSize;
   }
   
+  public float getBeatsPerBar(){
+    return beatsPerBar;
+  }
+  
   public void display(){
     
     //eventsTracks.display();
@@ -163,22 +171,5 @@ class TrackSequencer extends GUIElement{
         strokeWeight(1);
       line(0, gridYPos, width, gridYPos);
     }
-    
-    /*
-    
-    stroke(#999999);
-    int y1 = this.getY();
-    int w1 = this.getWidth();
-    int h1 = y1 + tracksPerMulti * gridSize * 3 + trackGroupSpacing * 3;
-    
-    for(int x1 = 0; x1 < w1; x1 += gridSize){
-      line(x1, y1, x1, h1);
-    }
-    
-    fill(#000000);
-    rect(this.getX(), y1 + tracksPerMulti * gridSize, this.getWidth(), trackGroupSpacing);
-    rect(this.getX(), y1 + tracksPerMulti * gridSize * 2 + trackGroupSpacing,     this.getWidth(), trackGroupSpacing);
-    rect(this.getX(), y1 + tracksPerMulti * gridSize * 3 + trackGroupSpacing * 2, this.getWidth(), trackGroupSpacing);
-    */
   }
 }

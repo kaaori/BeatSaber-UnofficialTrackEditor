@@ -29,6 +29,7 @@ class TrackSequencer extends GUIElement{
     this.setFillColor(color(#111111));
     
     waveform = new Waveform(this, 0, 0, gridSize, minim);
+    waveform.setSequencer(this);
     
     //eventsTracks    = new MultiTrack(this, numEventTracks,    gridSize, trackSize, "Events");
     bottomTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Bottom Notes");

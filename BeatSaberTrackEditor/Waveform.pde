@@ -9,6 +9,8 @@ class Waveform extends GUIElement {
   private int sampleRate = 44100;
   private float bpm = 90;
   
+  private TrackSequencer currentSequencer;
+  
   // Resolution of the display
   private float sizeOfAvg = 0.0;
   private int heightScale = 1;
@@ -42,6 +44,11 @@ class Waveform extends GUIElement {
     println("Loading sound file: " + path);
     
     resizeDisplay();
+  }
+  
+
+  public void setSequencer(TrackSequencer seq){
+    this.currentSequencer = seq;
   }
   
   public void setBPM(float bpm){
@@ -185,6 +192,16 @@ class Waveform extends GUIElement {
         strokeWeight(2);
         stroke(#ff0000);
         float ypos = soundPosition2Pixels(soundbis.position());
+        // Sanity check
+        println(currentSequencer);
+        //if (currentSequencer != null){
+        //  if (ypos % 757 == 0){
+        //    println("ding");
+        //    currentSequencer.scrollY(100);
+        //  }
+        //}
+
+        
         line(0, -ypos + this.getY(), width, -ypos + this.getY());
       }else{
         println("Error: Could not display waveform, sound is null!");
